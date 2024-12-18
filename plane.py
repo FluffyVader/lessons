@@ -11,7 +11,6 @@ pygame.display.set_caption("Plane shooter")
 planeSprite = pygame.image.load("plane.png")
 planeSpriteWidth = planeSprite.get_width()
 
-#planeSpriteHeight = planeSprite.get_height()
 
 running = True
 planeX = 0
@@ -25,7 +24,7 @@ while running:
                 plane_velocity = -plane_velocity
                 pass
             elif event.key == pygame.K_d:
-                if planeX<=WIDTH-planeSpriteWidth:
+                if planeX <= WIDTH-planeSpriteWidth:
                     plane_velocity = -plane_velocity
                 pass
         elif event.type == pygame.QUIT:
