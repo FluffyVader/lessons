@@ -1,5 +1,7 @@
 import pygame
 from pygame.locals import *
+
+# Defines
 HEIGHT=500
 WIDTH=400
 FPS=50
@@ -15,28 +17,29 @@ planeSpriteWidth = planeSprite.get_width()
 running = True
 planeX = 0
 planeY = 400
-plane_velocity=2
+default_plane_velocity = 2 # const. Please never modify it in runtime.
+current_plane_velocity = 0
 
+#Main Loop
 while running:
     for event in pygame.event.get():
-        if event.type== pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                plane_velocity = -plane_velocity
+                current_plane_velocity = -default_plane_velocity
                 pass
             elif event.key == pygame.K_d:
-                if planeX <= WIDTH-planeSpriteWidth:
-                    plane_velocity = -plane_velocity
+                current_plane_velocity = default_plane_velocity
                 pass
         elif event.type == pygame.QUIT:
             running = False
 
-    
-    planeX += plane_velocity
+    print(f"default_plane_velocity is {default_plane_velocity} current_plane_velocity is {current_plane_velocity}")
+    planeX += current_plane_velocity
 
-
+    # Constain X coordinate
     if planeX <= 0:
         planeX = 0
-    elif planeX >= WIDTH-planeSpriteWidth:
+    elif planeX >= WIDTH - planeSpriteWidth:
         planeX = WIDTH - planeSpriteWidth
     
 
