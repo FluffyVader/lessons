@@ -32,6 +32,14 @@ enemy_plane_sprite = pygame.image.load("plane.png")
 enemy_plane_Sprite_Width = enemy_plane_sprite.get_width()
 enemy_plane_sprite = pygame.transform.rotate(enemy_plane_sprite, 180)
 
+#bullet load
+bullet = pygame.image.load("bullet.png")
+bullet_velocity = 20
+
+bulletX = 0
+bulletY = 0
+
+bullet_state = True
 #Main Loop
 while running:
     for event in pygame.event.get():
@@ -40,9 +48,15 @@ while running:
                 current_plane_velocity = -default_plane_velocity
             elif event.key == pygame.K_d:
                 current_plane_velocity = default_plane_velocity
+            elif event.key == pygame.K_SPACE:
+                bullet_state = False
+                bulletX = planeX + (36 - 16)
+                bulletY = planeY - 32
+        
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_a or event.key == pygame.K_d:
                 current_plane_velocity = 0
+
 
 
 
@@ -62,6 +76,7 @@ while running:
     if enemy_planeX <= 0:
         enemy_planeX = 0
         enemy_current_plane_velocity = -enemy_current_plane_velocity
+
     elif enemy_planeX >= WIDTH - enemy_plane_Sprite_Width:
         enemy_planeX = WIDTH - enemy_plane_Sprite_Width
         enemy_current_plane_velocity = -enemy_current_plane_velocity
@@ -71,5 +86,8 @@ while running:
     screen.blit(planeSprite,(planeX,planeY))
     screen.blit(enemy_plane_sprite,(enemy_planeX,enemy_planeY))
     
+    if not bullet_state:
+        screen.blit(bullet,(bulletX, bulletY))
+        bulletY -= bullet_velocity
     clock.tick(FPS)
     pygame.display.flip()
