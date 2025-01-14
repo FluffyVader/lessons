@@ -37,12 +37,19 @@ enemy_plane_sprite_dead = False
 #bullet load
 bullet_sprite = pygame.image.load("bullet.png")
 bullet_velocity = 20
-bullet_srite_rect = bullet_sprite.get_rect()
+bullet_sprite_rect = bullet_sprite.get_rect()
+
+enemy_bullet_sprite = pygame.transform.rotate(bullet_sprite, 180)
+enemy_bullet_velocity = 20
+enemy_bullet_sprite_rect = enemy_bullet_sprite.get_rect()
+enemy_bullet = enemy_planeX+(32-16)
+
+is_enemy_bullet_spawned = False
 
 bulletX = 0
 bulletY = planeY - 32
-bullet_srite_rect.top = bulletY
-bullet_srite_rect.left = planeX + (36 - 16)
+bullet_sprite_rect.top = bulletY
+bullet_sprite_rect.left = planeX + (36 - 16)
 
 is_bullet_spawned = False
 #Main Loop
@@ -57,8 +64,8 @@ while running:
                 is_bullet_spawned = True
                 bulletX = planeX + (36 - 16)
                 bulletY = planeY - 32
-                bullet_srite_rect.left = planeX + (36 - 16)
-                bullet_srite_rect.top = bulletY
+                bullet_sprite_rect.left = planeX + (36 - 16)
+                bullet_sprite_rect.top = bulletY
 
         
         elif event.type == pygame.KEYUP:
@@ -99,15 +106,26 @@ while running:
     if is_bullet_spawned:
         bulletY -= bullet_velocity
         screen.blit(bullet_sprite,(bulletX, bulletY))
-        bullet_srite_rect.top = bulletY
+        bullet_sprite_rect.top = bulletY
 
 
-    if pygame.Rect.colliderect(bullet_srite_rect, enemy_plane_sprite_rect) :
-        print(f"Collided bullet_srite_rect: {bullet_srite_rect}  enemy_plane_sprite_rect{enemy_plane_sprite_rect}")
+    if pygame.Rect.colliderect(bullet_sprite_rect, enemy_plane_sprite_rect) :
+        print(f"Collided bullet_srite_rect: {bullet_sprite_rect}  enemy_plane_sprite_rect{enemy_plane_sprite_rect}")
         enemy_plane_sprite_dead = True
 
     #print(enemy_plane_sprite_rect)
     #print(bullet_srite_rect)
+    
+    if enemy_planeX == planeX:
+        is_enemy_bullet_spawned = True
+        bulletX = enemy_planeX + (36 - 16)
+        bulletY = enemy_planeY - 32
+        enemy_bullet_sprite_rect.left = enemy_planeX + (36 - 16)
+        enemy_bullet_sprite_rect.top = bulletY
+
+
+
+
 
     clock.tick(FPS)
     pygame.display.flip()
