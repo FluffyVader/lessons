@@ -24,32 +24,49 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Plane shooter")
 
 #my plane loading
-planeSprite = pygame.image.load("plane.png")
-planeSpriteWidth = planeSprite.get_width()
+plane_sprite = pygame.image.load("plane.png")
+plane_sprite_width = plane_sprite.get_width()
+plane_sprite_height = plane_sprite.get_height()
+plane_sprite_rect = plane_sprite.get_rect()
+is_plane_dead = False
 
 #enemy loading
 enemy_plane_sprite = pygame.image.load("plane.png")
-enemy_plane_Sprite_Width = enemy_plane_sprite.get_width()
 enemy_plane_sprite = pygame.transform.rotate(enemy_plane_sprite, 180)
+enemy_plane_sprite_width = enemy_plane_sprite.get_width()
+enemy_plane_sprite_height = enemy_plane_sprite.get_height()
 enemy_plane_sprite_rect = enemy_plane_sprite.get_rect() ###############
 enemy_plane_sprite_dead = False
 
+print(F"enemy_plane_sprite_width : {enemy_plane_sprite_width}")
+
 #bullet load
 bullet_sprite = pygame.image.load("bullet.png")
+bullet_sprite_width = bullet_sprite.get_width()
+bullet_sprite_height = bullet_sprite.get_height()
 bullet_velocity = 20
 bullet_sprite_rect = bullet_sprite.get_rect()
 
-enemy_bullet_sprite = pygame.transform.rotate(bullet_sprite, 180)
-enemy_bullet_velocity = 20
-enemy_bullet_sprite_rect = enemy_bullet_sprite.get_rect()
-enemy_bullet = enemy_planeX+(32-16)
-
-is_enemy_bullet_spawned = False
+print(f"bullet_sprite_width and bullet_sprite_height: {bullet_sprite_width},{bullet_sprite_height}")
 
 bulletX = 0
 bulletY = planeY - 32
 bullet_sprite_rect.top = bulletY
 bullet_sprite_rect.left = planeX + (36 - 16)
+
+#enemy bullet load
+enemy_bullet_sprite = pygame.transform.rotate(bullet_sprite, 180)
+enemy_bullet_sprite_width = enemy_bullet_sprite.get_width()
+enemy_bullet_sprite_height = enemy_bullet_sprite.get_height()
+enemy_bullet_velocity = 20
+enemy_bullet_sprite_rect = enemy_bullet_sprite.get_rect()
+
+enemy_bulletX = enemy_planeX + enemy_plane_sprite_width/2 - enemy_bullet_sprite_width/2
+enemy_bulletY = enemy_planeY + enemy_plane_sprite_height
+enemy_bullet_sprite_rect.top = enemy_bulletY
+enemy_bullet_sprite_rect.left = enemy_bulletX
+
+is_enemy_bullet_spawned = False
 
 is_bullet_spawned = False
 #Main Loop
@@ -84,22 +101,27 @@ while running:
     # Constain X coordinate
     if planeX <= 0:
         planeX = 0
-    elif planeX >= WIDTH - planeSpriteWidth:
-        planeX = WIDTH - planeSpriteWidth
+    elif planeX >= WIDTH - plane_sprite_width:
+        planeX = WIDTH - plane_sprite_width
 
     if enemy_planeX <= 0:
         enemy_planeX = 0
         enemy_current_plane_velocity = -enemy_current_plane_velocity
 
-    elif enemy_planeX >= WIDTH - enemy_plane_Sprite_Width:
-        enemy_planeX = WIDTH - enemy_plane_Sprite_Width
+    elif enemy_planeX >= WIDTH - enemy_plane_sprite_width:
+        enemy_planeX = WIDTH - enemy_plane_sprite_width
         enemy_current_plane_velocity = -enemy_current_plane_velocity
 
-    enemy_plane_sprite_rect.left = enemy_planeX
+    enemy_plane_sprite_rect.left    = enemy_planeX
+    enemy_plane_sprite_rect.top     = enemy_planeY
+    plane_sprite_rect.left  = planeX
+    plane_sprite_rect.top   = planeY
 
     screen.fill("black")
     
-    screen.blit(planeSprite,(planeX,planeY))
+    if not is_plane_dead:
+        screen.blit(plane_sprite,(planeX,planeY))
+    
     if not enemy_plane_sprite_dead:
         screen.blit(enemy_plane_sprite,(enemy_planeX,enemy_planeY))
     
@@ -118,11 +140,22 @@ while running:
     
     if enemy_planeX == planeX:
         is_enemy_bullet_spawned = True
-        bulletX = enemy_planeX + (36 - 16)
-        bulletY = enemy_planeY - 32
-        enemy_bullet_sprite_rect.left = enemy_planeX + (36 - 16)
-        enemy_bullet_sprite_rect.top = bulletY
+        enemy_bulletX = enemy_planeX + enemy_plane_sprite_width/2 - enemy_bullet_sprite_width/2 
+        enemy_bulletY = enemy_planeY + enemy_plane_sprite_height
+        enemy_bullet_sprite_rect.left = enemy_bulletX
+        enemy_bullet_sprite_rect.top =  enemy_bulletY
 
+    if is_enemy_bullet_spawned == True:
+        enemy_bulletY += enemy_bullet_velocity
+        screen.blit(enemy_bullet_sprite,(enemy_bulletX, enemy_bulletY))
+        enemy_bullet_sprite_rect.top = enemy_bulletY
+
+    print(f"enemy_bullet_sprite_rect: {enemy_bullet_sprite_rect}")
+    print(f"plane_sprite_rect: {plane_sprite_rect}")
+
+    if pygame.Rect.colliderect(enemy_bullet_sprite_rect, plane_sprite_rect):
+        print(f"Collided enemy_bullet_sprite_rect: {enemy_bullet_sprite_rect}  plane_sprite_rect: {plane_sprite_rect}")
+        is_plane_dead = True
 
 
 
